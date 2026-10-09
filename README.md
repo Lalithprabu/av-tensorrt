@@ -1,0 +1,101 @@
+# AV TensorRT: Optimising Perception for Automotive Latency Budgets
+
+Hands-on project optimising a YOLO object detector for a **33 ms automotive frame budget (30 fps)**, moving from PyTorch FP32 to ONNX and then TensorRT FP16/INT8, with a focus on **protecting small-object accuracy (distant pedestrians)** under quantisation.
+
+Built by a systems and functional safety engineer (ISO 26262 / ISO 21448) learning to apply V-Model discipline (baselines, back-to-back testing, worst-case timing evidence) to AI perception deployment.
+
+Companion project: [sotif-cocoon](https://github.com/Lalithprabu/sotif-cocoon), a runtime safety layer around the same YOLOv8n model.
+
+---
+
+## Roadmap
+
+| Phase | Description | Status |
+|---|---|---|
+| 1 | Workstation setup, latency budget model | Done |
+| 2 | FP32 GPU baseline and benchmark (mean / p99 / max) | Done |
+| 3 | ONNX export and numerical equivalence test | Done |
+| 4 | TensorRT FP16 engine | Next |
+| 5 | TensorRT INT8 with calibration | Planned |
+| 6 | Layer sensitivity analysis and mixed precision for small objects | Planned |
+| 7 | Profiling (Nsight Systems) and safety argument (SOTIF) | Planned |
+
+---
+
+## Results so far
+
+### Timing baseline: YOLOv8n, FP32, bus.jpg
+
+| Configuration | Inference mean | Inference p99 | Inference max | End-to-end mean | End-to-end max |
+|---|---|---|---|---|---|
+| CPU, i7-13650HX (single run, from sotif-cocoon) | 133.1 ms | n/a | n/a | ~157 ms | n/a |
+| GPU, RTX 5050 Laptop, PyTorch FP32 (10 warm-up, 300 timed runs) | **5.84 ms** | **9.28 ms** | **10.20 ms** | 13.59 ms | 20.58 ms |
+
+- GPU inference is roughly 20x faster than CPU on mean figures.
+- **0 of 300** frames exceeded the 15 ms inference allocation in the budget model.
+- End-to-end time is more than double inference time: image loading, preprocessing, NMS and Python overhead (~7.8 ms) now dominate. Optimising the network alone has diminishing returns.
+
+### ONNX export equivalence (identical 640x640 input, raw network outputs)
+
+| Metric | Value |
+|---|---|
+| Output shape (PyTorch vs ONNX) | (1, 84, 8400) vs (1, 84, 8400) |
+| Max absolute difference | 0.001709 |
+| Mean absolute difference | 0.00000131 |
+
+The exported ONNX model is numerically faithful to the PyTorch model (differences are a small fraction of a pixel in box coordinates).
+
+A separate pipeline-level comparison through Ultralytics showed different detections (6 vs 5 objects; a stop sign at 0.255 confidence dropped out). This is attributed to **preprocessing differences**: the `.pt` model is run on a rectangular letterboxed input, while the static ONNX model uses a padded 640x640 square. Lesson: preprocessing is part of the perception function, and low-confidence detections (distant, small objects) are the first to flip under small input changes.
+
+---
+
+## Known limitations of the evidence (honest caveats)
+
+- **Single image, repeated.** Inference time is largely input-independent, but postprocessing (NMS) scales with the number of detections. Varied scenes are needed.
+- **300 frames is not proof.** With 0 misses in 300 trials, the rule of three only supports a miss rate below ~1% at 95% confidence (about one miss every 3 to 4 seconds at 30 fps).
+- **Laptop GPU, not automotive target.** Absolute timings will differ on NVIDIA DRIVE Orin/Thor. The method transfers; the numbers do not.
+- **Test conditions:** mains power, Lenovo Performance mode. Laptop GPU clocks vary with power and temperature.
+- **Accuracy not yet measured on a dataset.** Phases 5 and 6 will add mAP, including small-object mAP, on COCO.
+
+---
+
+## Scripts
+
+| File | Purpose |
+|---|---|
+| `hello_budget.py` | 30 fps latency budget model with margin and pass/fail check |
+| `check_gpu.py` | Confirms PyTorch can see the GPU (CUDA availability, compute capability) |
+| `first_detection_gpu.py` | First GPU detection, shows warm-up effect over 5 runs |
+| `benchmark.py` | 10 warm-up + 300 timed runs; reports mean, p99, max and deadline misses |
+| `export_onnx.py` | Exports YOLOv8n to ONNX (opset 17, static 640x640, simplified) |
+| `compare_onnx.py` | Pipeline-level comparison of `.pt` vs `.onnx` detections via Ultralytics |
+| `equivalence_test.py` | Raw-output back-to-back test with identical input tensors |
+
+---
+
+## Environment
+
+| Item | Version |
+|---|---|
+| Laptop | Lenovo Legion 5 15IRX10, i7-13650HX, 32 GB RAM |
+| GPU | NVIDIA GeForce RTX 5050 Laptop GPU, 8 GB (Blackwell, compute capability 12.0) |
+| NVIDIA driver | 616.92 (CUDA 13.4 supported) |
+| Python | 3.10.0 |
+| PyTorch | 2.11.0+cu128 |
+| Ultralytics | 8.4.175 |
+| ONNX / ONNX Runtime / onnxslim | 1.23.2 / 1.23.2 / 0.1.98 |
+
+## How to run
+
+```
+python -m venv .venv
+.venv\Scripts\activate
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+pip install ultralytics onnx onnxslim onnxruntime
+python check_gpu.py
+python benchmark.py
+python export_onnx.py
+python equivalence_test.py
+```
+
+Model weights (`yolov8n.pt`) download automatically on first run. `yolov8n.onnx` is regenerated by `export_onnx.py`, so neither is committed.
