@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 340" font-family="Segoe UI, Inter, -apple-system, Helvetica, Arial, sans-serif">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a0f1a"/><stop offset="1" stop-color="#12284a"/></linearGradient><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#ffffff" stroke-opacity="0.05"/></pattern></defs>
+<rect width="1280" height="340" rx="18" fill="url(#bg)"/>
+<rect width="1280" height="340" rx="18" fill="url(#grid)"/>
+<text x="56" y="70" fill="#7fb2f0" font-size="15" font-weight="700" letter-spacing="3">EMBEDDED AI  ·  AUTOMOTIVE PERCEPTION</text>
+<text x="54" y="138" fill="#ffffff" font-size="62" font-weight="800">AV TensorRT</text>
+<text x="56" y="180" fill="#c9d4e3" font-size="21">Optimising YOLO for a 33 ms frame budget,</text>
+<text x="56" y="208" fill="#c9d4e3" font-size="21">without losing the distant pedestrian.</text>
+<rect x="56" y="256" width="178" height="38" rx="19" fill="#1b6b3a" stroke="#35c46a"/>
+<path d="M72 275l5 5 9-10" stroke="#35c46a" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="94" y="281" fill="#ffffff" font-size="15" font-weight="600">PyTorch FP32</text>
+<path d="M236.60000000000002 275h6" stroke="#5f7393" stroke-width="2"/>
+<rect x="245.60000000000002" y="256" width="102" height="38" rx="19" fill="#1b6b3a" stroke="#35c46a"/>
+<path d="M261.6 275l5 5 9-10" stroke="#35c46a" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="283.6" y="281" fill="#ffffff" font-size="15" font-weight="600">ONNX</text>
+<path d="M351.0 275h6" stroke="#5f7393" stroke-width="2"/>
+<rect x="360.0" y="256" width="167" height="38" rx="19" fill="#5a4300" stroke="#f0b429"/>
+<text x="376.0" y="281" fill="#ffffff" font-size="15" font-weight="600">TensorRT FP16</text>
+<path d="M530.2 275h6" stroke="#5f7393" stroke-width="2"/>
+<rect x="539.2" y="256" width="153" height="38" rx="19" fill="#1c2a40" stroke="#3a4d6b"/>
+<text x="555.2" y="281" fill="#ffffff" font-size="15" font-weight="600">INT8 + mixed</text>
+<text x="760" y="92" fill="#c9d4e3" font-size="15">Frame budget  ·  30 fps</text>
+<text x="1220" y="92" fill="#ffffff" font-size="15" font-weight="700" text-anchor="end">33.3 ms</text>
+<rect x="760" y="106" width="460" height="22" rx="11" fill="#1c2a40"/>
+<rect x="760" y="106" width="187.7" height="22" rx="11" fill="#2a78d6" fill-opacity="0.45"/>
+<rect x="760" y="106" width="80.7" height="22" rx="11" fill="#5aa2f5"/>
+<text x="760" y="190" fill="#ffffff" font-size="54" font-weight="800">5.84<tspan font-size="24" font-weight="600" fill="#c9d4e3"> ms</tspan></text>
+<text x="760" y="218" fill="#9fb0c8" font-size="14.5">mean GPU inference, FP32  ·  13.6 ms end-to-end</text>
+<text x="760" y="281" fill="#9fb0c8" font-size="14.5">Phase 3 of 7</text>
+<circle cx="890" cy="276" r="7" fill="#35c46a"/>
+<circle cx="916" cy="276" r="7" fill="#35c46a"/>
+<circle cx="942" cy="276" r="7" fill="#35c46a"/>
+<circle cx="968" cy="276" r="7" fill="#f0b429"/>
+<circle cx="994" cy="276" r="7" fill="#2b3b55"/>
+<circle cx="1020" cy="276" r="7" fill="#2b3b55"/>
+<circle cx="1046" cy="276" r="7" fill="#2b3b55"/>
+</svg>

@@ -1,0 +1,28 @@
+{
+  "_comment": "Single source of truth for every number in the README charts. Update this file after each phase, then run: python make_charts.py",
+  "frame_budget_ms": 33.3,
+  "inference_allocation_ms": 15.0,
+  "hardware": "RTX 5050 Laptop GPU",
+  "model": "YOLOv8n",
+  "phase_done": 3,
+  "phase_total": 7,
+  "latency_configs": [
+    {"label": "CPU  -  PyTorch FP32", "inference_mean_ms": 133.1, "note": "single run"},
+    {"label": "GPU  -  PyTorch FP32", "inference_mean_ms": 5.84, "note": "300 runs"},
+    {"label": "GPU  -  TensorRT FP16", "inference_mean_ms": null, "note": "Phase 4"},
+    {"label": "GPU  -  TensorRT INT8", "inference_mean_ms": null, "note": "Phase 5"}
+  ],
+  "timing_spread_fp32_gpu": {
+    "runs": 300,
+    "inference":  {"mean": 5.84,  "p99": 9.28,  "max": 10.20},
+    "end_to_end": {"mean": 13.59, "p99": 17.70, "max": 20.58}
+  },
+  "budget_model": [
+    {"stage": "Capture + ISP",   "ms": 8.0,   "measured": false},
+    {"stage": "Preprocess",      "ms": 3.0,   "measured": false},
+    {"stage": "Inference",       "ms": 10.20, "measured": true},
+    {"stage": "NMS",             "ms": 2.0,   "measured": false},
+    {"stage": "Hand-off",        "ms": 1.0,   "measured": false}
+  ],
+  "onnx_equivalence": {"max_abs_diff": 0.001709, "mean_abs_diff": 0.00000131}
+}
